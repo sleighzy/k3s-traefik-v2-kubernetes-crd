@@ -1,0 +1,72 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: kube-system
+  name: traefik-ingress-controller
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: kube-system
+  name: traefik
+  labels:
+    app: traefik
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefik
+  template:
+    metadata:
+      labels:
+        app: traefik
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      containers:
+        - name: traefik
+          image: traefik:v2.2
+          args:
+            - --api.insecure
+            - --api.dashboard=true
+            - --accesslog
+            - --entrypoints.traefik.address=:8080
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
+            - --providers.kubernetescrd
+            - --certificatesresolvers.godaddy.acme.email=giveit@gmail.com
+            - --certificatesresolvers.godaddy.acme.storage=/etc/traefik/certs/acme.json
+            - --certificatesResolvers.godaddy.acme.dnsChallenge.provider=godaddy
+            - --certificatesResolvers.godaddy.acme.dnsChallenge.delayBeforeCheck=0
+            # Please note that this is the staging Let's Encrypt server.
+            # Once you get things working, you should remove that whole line altogether.
+            # - --certificatesresolvers.godaddy.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+            - --log
+            - --log.level=INFO
+          ports:
+            - name: web
+              containerPort: 80
+            - name: websecure
+              containerPort: 443
+            - name: admin
+              containerPort: 8080
+          volumeMounts:
+            - name: certificates
+              mountPath: /etc/traefik/certs
+          env:
+            - name: GODADDY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: godaddy
+                  key: GODADDY_API_KEY
+            - name: GODADDY_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: godaddy
+                  key: GODADDY_API_SECRET
+      volumes:
+        - name: certificates
+          persistentVolumeClaim:
+            claimName: traefik-certs-pvc

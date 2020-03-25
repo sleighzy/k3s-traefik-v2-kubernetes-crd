@@ -36,7 +36,7 @@ spec:
             - --entrypoints.web.address=:80
             - --entrypoints.websecure.address=:443
             - --providers.kubernetescrd
-            - --certificatesresolvers.godaddy.acme.email=giveit@gmail.com
+            - --certificatesresolvers.godaddy.acme.email=me@mydomain.io
             - --certificatesresolvers.godaddy.acme.storage=/etc/traefik/certs/acme.json
             - --certificatesResolvers.godaddy.acme.dnsChallenge.provider=godaddy
             - --certificatesResolvers.godaddy.acme.dnsChallenge.delayBeforeCheck=0

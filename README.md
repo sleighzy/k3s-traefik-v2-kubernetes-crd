@@ -178,9 +178,10 @@ Running the below command from the Docker host should hit the `whoami` service
 as the default port `80` for http traffic is being routed to the k3s server node
 (docker container), and the Traefik ingress will be matching the
 `whoami.mydomain.io` host header rule. Note, while the Traefik pod will not be
-running on the server node (but the docker host port 80 is bound to the k3s server docker
-container) k3s will still route this to the Traefik pod as expected due to the
-klippy-lb service loadbalancer that is installed by k3s by default.
+running on the server node (but the docker host port 80 is bound to the k3s
+server docker container) k3s will still route this to the Traefik pod as
+expected due to the klippy-lb service loadbalancer that is installed by k3s by
+default.
 
 ```sh
 $ curl http://localhost/ -H "host:whoami.mydomain.io"
@@ -216,7 +217,7 @@ expire.
 
 The configuration in this repository can be used to integrate with GoDaddy for
 dns challenges as this is my DNS provider. The `...caserver` argument in for
-Traefik in the `./004-deployment.yaml` is for the LetsEncrypt Staging server,
+Traefik in the `./005-deployment.yaml` is for the LetsEncrypt Staging server,
 currently commented out, and can be used for initial testing purposes. Note that
 staging server will require you to add an intermediate certificate as it is not
 a completely trusted chain. The `...acme.storage` argument states where Traefik
@@ -238,9 +239,9 @@ provider's DNS so that https traffic is routed to your server and onto Traefik.
 Traefik will use its APIs to create DNS entries for the certificate challenge,
 e.g. `TXT` entry `_acme-challenge.whoami` for the whoami service.
 
-Get the API keys and API secrets may be required by your DNS provider, they are
-for my GoDaddy account, so that the APIs can be called by Traefik to create the
-required DNS entries for the certificate challenge.
+Get the API keys and API secrets that may be required by your DNS provider, they
+are for my GoDaddy account, so that the APIs can be called by Traefik to create
+the required DNS entries for the certificate challenge.
 
 Create base64 encoded strings from the API keys and secrets, and then update the
 `./002-secrets.yaml` file with them before applying the file.

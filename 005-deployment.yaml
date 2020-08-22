@@ -29,7 +29,6 @@ spec:
         - name: traefik
           image: traefik:v2.2
           args:
-            - --api.insecure
             - --api.dashboard=true
             - --accesslog
             - --entrypoints.traefik.address=:8080

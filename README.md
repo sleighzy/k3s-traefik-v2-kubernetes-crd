@@ -92,9 +92,12 @@ secrets from the `./005-deployment.yaml` file. The later sections in this README
 file will cover the HTTPS integration in greater depth.
 
 - [001-rbac.yaml](./001-rbac.yaml) - CRDs and cluster roles
+- [002-middlewares.yaml](./002-middlewares.yaml) - this is optional, but is
+  needed if wanting to secure the Traefik dashboard using Basic Authentication
 - [002-secrets.yaml](./002-secrets.yaml) - this is optional, but is needed if
-  integrating with LetsEncrypt (depending on your mechanism) as per the examples
-  further down, for API keys etc. for your DNS provider
+  - using Basic Authentication for the dashboard
+  - integrating with LetsEncrypt (depending on your mechanism) for API keys etc.
+    for your DNS provider as per the examples further down
 - [003-pvc.yaml](./003-pvc.yaml) - this is optional, but is used when
   integrating with LetsEncrypt as this creates a persistent volume on the host
   machine that is used to store the certificates
@@ -103,8 +106,11 @@ file will cover the HTTPS integration in greater depth.
 - [005-deployment.yaml](./005-deployment.yaml) - the deployment of the Traefik
   container with the associated mounts for secrets and persistent volume if
   integrating with LetsEncrypt for https certificates
+- [006-ingressroute.yaml](./006-ingressroute.yaml) - this is optional, but can
+  be used to expose the Traefik dashboard externally and secure using Basic
+  Authentication
 
-### Traefik Dashboard
+## Traefik Dashboard
 
 Traefik provides a number of dashboards for viewing your services, routes,
 middleware, etc. In the current deployment configuration this is not being
@@ -114,6 +120,59 @@ from the docker host to the traefik service and then you can navigate to
 
 ```sh
 kubectl port-forward --address 0.0.0.0 service/traefik 8080:8080 -n kube-system
+```
+
+### Basic Authentication
+
+The Traefik deployment in this repository has configured to secure the dashboard
+so that it can be exposed externally, using Basic Authentication with a username
+and password to do so. The `--api.insecure` argument has been removed (depending
+on if you are using CLI or files for the Traefik static configuration) and
+middleware used to enforce authentication.
+
+Create a username and password using the command below that can then be added to
+the `002-secrets.yaml` file.
+
+```sh
+$ htpasswd -nb mysecretuser mysecretpw | openssl base64
+bXlzZWNyZXR1c2VyOiRhcHIxJHNnaDNiRmlqJHI4TU5JWi9Pbkg1NVhraTBnL0FM
+Ui4KCg==
+```
+
+Note in the example config below the `|2`, this means that the following lines
+have an explicit 2 character indent. This is so that when the yaml is parsed the
+base64encoded string is extracted correctly, without including the 2 leading
+whitespace characters.
+
+```yaml
+data:
+  users: |2
+    bXlzZWNyZXR1c2VyOiRhcHIxJHNnaDNiRmlqJHI4TU5JWi9Pbkg1NVhraTBnL0FM
+    Ui4KCg==
+```
+
+The `002.middlewares.yaml` file contains the middleware configuration to state
+that Basic Authentication is to be used, and where to locate the secret
+containing the username and password.
+
+The `006-ingressroute.yaml` file contains the below `IngressRoute` definition
+that exposes the dashboard and instructs Traefik to use the `traefik-basic-auth`
+middleware when routing this request. This will prompt the user to enter their
+username and password to be authenticated prior to being able to access this
+resource. Requests to <https://traefik.mydomain.io/api> and
+<https://traefik.mydomain.io/dashboard> will display the dashboard (and API
+calls) and require the user to be authenticated.
+
+```yaml
+routes:
+  - match:
+      Host(`traefik.mydomain.io`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+    kind: Rule
+    services:
+      - name: api@internal
+        kind: TraefikService
+    middlewares:
+      - name: traefik-basic-auth
 ```
 
 ## Deploy the whoami service and use Traefik 2 IngressRoute

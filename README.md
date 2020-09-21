@@ -52,18 +52,18 @@ cluster. This performs the following:
   installed
 
 ```sh
-$ k3d create \
-  --name sleighzy \
+$ k3d cluster create \
+  sleighzy \
   --volume /mnt/f/k3s/manifests:/var/lib/rancher/k3s/server/manifests \
   --volume /mnt/f/data/k3s/storage:/var/lib/rancher/k3s/storage \
-  --api-port 6550 \
-  --publish 80:80 \
-  --publish 443:443 \
-  --workers 2 \
-  --server-arg --no-deploy \
-  --server-arg traefik
+  --api-port 0.0.0.0:6550 \
+  --port "80:80@loadbalancer" \
+  --port "443:443@loadbalancer" \
+  --agents 2 \
+  --k3s-server-arg --no-deploy \
+  --k3s-server-arg traefik
 
-$ export KUBECONFIG="$(k3d get-kubeconfig --name='sleighzy')"
+$ export KUBECONFIG="$(k3d kubeconfig get sleighzy)"
 
 $ kubectl cluster-info
 ```
@@ -207,6 +207,19 @@ spec:
           ports:
             - name: web
               containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+
+spec:
+  ports:
+    - protocol: TCP
+      name: web
+      port: 80
+  selector:
+    app: whoami
 ```
 
 For the Traefik `IngressRoute` the below configuration can be applied to route

@@ -1,0 +1,17 @@
+---
+# https://doc.traefik.io/traefik/https/tls/#tls-options
+# Set the minimum TLS version to 1.3.
+# This will pass the SSL Labs checks for the web site.
+# https://www.ssllabs.com/ssltest/
+# The "default" option is special and is used across all
+# namespaces if not overridden by an ingress route.
+# There must be only one with the name "default" otherwise
+# they will be dropped.
+apiVersion: traefik.containo.us/v1alpha1
+kind: TLSOption
+metadata:
+  name: default
+  namespace: default
+
+spec:
+  minVersion: VersionTLS13

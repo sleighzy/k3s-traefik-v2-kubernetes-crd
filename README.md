@@ -47,7 +47,7 @@ cluster. This performs the following:
   and they will be created here on the host machine.
 - (optional) publish ports 80 and 443 to the host machine so that we can send
   external web traffic (http and https) to the cluster
-- the `--server-arg` arguments will pass `--no-deploy traefik` to k3s when the
+- the `--server-arg` arguments will pass `--disable traefik` to k3s when the
   cluster is created so that the default Traefik 1.7 ingress controller is not
   installed
 
@@ -60,7 +60,7 @@ $ k3d cluster create \
   --port "80:80@loadbalancer" \
   --port "443:443@loadbalancer" \
   --agents 2 \
-  --k3s-server-arg --no-deploy \
+  --k3s-server-arg --disable \
   --k3s-server-arg traefik
 
 $ export KUBECONFIG="$(k3d kubeconfig get sleighzy)"
@@ -71,7 +71,7 @@ $ kubectl cluster-info
 ## Install Traefik Kubernetes CRD Ingress Controller
 
 k3s ships with Traefik 1.7 by default so we need to install Traefik 2 separately
-using the manifests in this repository as the `--no-deploy traefik` arguments we
+using the manifests in this repository as the `--disable traefik` arguments we
 used mean that Traefik is not installed.
 
 Apply the manifests in order (prefixed by number) to install the secrets, k8s

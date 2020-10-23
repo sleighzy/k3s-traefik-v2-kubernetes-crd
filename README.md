@@ -92,6 +92,8 @@ secrets from the `./005-deployment.yaml` file. The later sections in this README
 file will cover the HTTPS integration in greater depth.
 
 - [001-rbac.yaml](./001-rbac.yaml) - CRDs and cluster roles
+- [001-tls-options.yaml](./001-tls-options.yaml) - this is optional, but
+  enforces by default that TLS 1.3 is to be used for secure connections
 - [002-middlewares.yaml](./002-middlewares.yaml) - this is optional, but is
   needed if wanting to secure the Traefik dashboard using Basic Authentication
 - [002-secrets.yaml](./002-secrets.yaml) - this is optional, but is needed if

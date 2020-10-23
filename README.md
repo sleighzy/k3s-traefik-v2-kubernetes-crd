@@ -84,7 +84,7 @@ should work as expected.
 Note that the secrets, and their usage in the deployment, will be required if
 you are using Traefik and the integration with LetsEncrypt for automatic
 creation of certificates for https services. The configuration here is also for
-integrating with GoDaddy for the https certiricates so the configuration may be
+integrating with GoDaddy for the https certificates so the configuration may be
 different for your provider so refer to the Traefik documentation on this. If
 you are not using https and integration with LetsEncrypt then you do not need to
 apply the `./002-secrets.yaml` file, and can remove the mounting of those
@@ -116,7 +116,11 @@ Traefik provides a number of dashboards for viewing your services, routes,
 middleware, etc. In the current deployment configuration this is not being
 exposed outside of the cluster. You can port forward `8080` (the admin port)
 from the docker host to the traefik service and then you can navigate to
-<http://localhost:8080/dashboard> in your browser to view the Traefik dashboard.
+<http://localhost:8080/dashboard/> in your browser to view the Traefik
+dashboard.
+
+**Note:** as per <https://doc.traefik.io/traefik/operations/dashboard/> the url
+for accessing the dashboard must contain a trailing slash.
 
 ```sh
 kubectl port-forward --address 0.0.0.0 service/traefik 8080:8080 -n kube-system
@@ -160,8 +164,11 @@ that exposes the dashboard and instructs Traefik to use the `traefik-basic-auth`
 middleware when routing this request. This will prompt the user to enter their
 username and password to be authenticated prior to being able to access this
 resource. Requests to <https://traefik.mydomain.io/api> and
-<https://traefik.mydomain.io/dashboard> will display the dashboard (and API
+<https://traefik.mydomain.io/dashboard/> will display the dashboard (and API
 calls) and require the user to be authenticated.
+
+**Note:** as per <https://doc.traefik.io/traefik/operations/dashboard/> the url
+for accessing the dashboard must contain a trailing slash.
 
 ```yaml
 routes:

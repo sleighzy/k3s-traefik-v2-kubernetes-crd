@@ -36,19 +36,3 @@ spec:
       port: 80
   selector:
     app: whoami
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: whoami
-  namespace: default
-
-spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`whoami.mydomain.io`)
-      kind: Rule
-      services:
-        - name: whoami
-          port: 80

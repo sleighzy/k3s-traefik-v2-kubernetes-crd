@@ -1,0 +1,17 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: whoami-tls
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`whoami.mydomain.io`) && PathPrefix(`/tls`)
+      services:
+        - name: whoami
+          port: 80
+  tls:
+    certResolver: godaddy

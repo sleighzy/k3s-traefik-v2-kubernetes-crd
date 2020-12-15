@@ -375,7 +375,7 @@ spec:
 Confirm that the service and ingress route have been created.
 
 ```sh
-$ kubectl get svc,ep,ingress,ingressroute -o wide
+$ kubectl get svc,ep,ingressroute -o wide
 NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE     SELECTOR
 service/kubernetes   ClusterIP   10.43.0.1       <none>        443/TCP   2d19h   <none>
 service/whoami       ClusterIP   10.43.226.213   <none>        80/TCP    2d19h   app=whoami
@@ -416,3 +416,23 @@ X-Forwarded-Server: traefik-7c8b9b949f-cws5b
 X-Forwarded-User:
 X-Real-Ip: 10.42.1.6
 ```
+
+## Traefik 2.2 and Kubernetes Ingress
+
+Traefik
+[Kubernetes Ingress](https://doc.traefik.io/traefik/providers/kubernetes-ingress/)
+provider supports
+[Kubernete Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+objects for managing access to services.
+
+The `--providers.kubernetesingress` CLI parameter in the deployment manifest
+enables using this provider to configure Traefik. This provider be can run with
+the Kubernetes CRD one enabled as well, `--providers.kubernetescrd`, so that
+both options are supported.
+
+The [300-whoami-ingress.yaml](./300-whoami-ingress.yaml) manifest file can be
+applied instead of the
+[200-whoami-ingressroute.yaml](./200-whoami-ingressroute.yaml) file to use the
+Kubernetes Ingress to provide access to the whoami service. This example ingress
+also shows the use of the annotation support that was added in Traefik 2.2 for
+these objects for things such as the entry point and tls configuration.

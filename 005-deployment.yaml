@@ -30,6 +30,7 @@ spec:
           image: traefik:v2.3
           args:
             - --api.dashboard=true
+            - --ping=true
             - --accesslog
             - --entrypoints.traefik.address=:8080
             - --entrypoints.web.address=:80
@@ -45,6 +46,19 @@ spec:
             # - --certificatesresolvers.godaddy.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
             - --log
             - --log.level=INFO
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ping
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources:
+            limits:
+              memory: '100Mi'
+              cpu: '1000m'
           ports:
             - name: web
               containerPort: 80

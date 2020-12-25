@@ -20,6 +20,19 @@ spec:
       containers:
         - name: whoami
           image: containous/whoami
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources:
+            limits:
+              memory: '50Mi'
+              cpu: '500m'
           ports:
             - name: web
               containerPort: 80

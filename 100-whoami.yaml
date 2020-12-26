@@ -1,12 +1,11 @@
 ---
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
   namespace: default
   name: whoami
   labels:
     app: whoami
-
 spec:
   replicas: 1
   selector:
@@ -16,15 +15,31 @@ spec:
     metadata:
       labels:
         app: whoami
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/whoami: runtime/default
     spec:
       containers:
         - name: whoami
           image: containous/whoami
+          imagePullPolicy: Always
+          # Listen on port 8080 to run as non-root user
+          args:
+            - --port
+            - '8080'
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            # Run the container as nobody:nogroup
+            runAsUser: 65534
+            runAsGroup: 65534
+            capabilities:
+              drop:
+                - ALL
           livenessProbe:
             failureThreshold: 3
             httpGet:
               path: /health
-              port: 80
+              port: 8080
               scheme: HTTP
             initialDelaySeconds: 5
             periodSeconds: 10
@@ -35,17 +50,19 @@ spec:
               cpu: '500m'
           ports:
             - name: web
-              containerPort: 80
+              containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: whoami
-
 spec:
   ports:
     - protocol: TCP
       name: web
       port: 80
+      # whoami is listening on 8080 from --port argument so that non-root user
+      # can run container as needs to bind to ports higher than 1024
+      targetPort: 8080
   selector:
     app: whoami

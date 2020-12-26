@@ -116,8 +116,8 @@ file will cover the HTTPS integration in greater depth.
 
 Traefik provides a number of dashboards for viewing your services, routes,
 middleware, etc. In the current deployment configuration this is not being
-exposed outside of the cluster. You can port forward `8080` (the admin port)
-from the docker host to the traefik service and then you can navigate to
+exposed outside of the cluster. You can port forward `8080` on the docker host
+to the traefik admin service and then you can navigate to
 <http://localhost:8080/dashboard/> in your browser to view the Traefik
 dashboard.
 
@@ -125,7 +125,7 @@ dashboard.
 for accessing the dashboard must contain a trailing slash.
 
 ```sh
-kubectl port-forward --address 0.0.0.0 service/traefik 8080:8080 -n kube-system
+kubectl port-forward --address 0.0.0.0 service/traefik 8080:admin -n kube-system
 ```
 
 ### Basic Authentication

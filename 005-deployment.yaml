@@ -23,8 +23,14 @@ spec:
     metadata:
       labels:
         app: traefik
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/traefik: runtime/default
     spec:
       serviceAccountName: traefik-ingress-controller
+      securityContext:
+        # Use nogroup (and needs nobody) for the acme.json file
+        # for storing TLS
+        fsGroup: 65534
       containers:
         - name: traefik
           image: traefik:v2.3
@@ -32,9 +38,9 @@ spec:
             - --api.dashboard=true
             - --ping=true
             - --accesslog
-            - --entrypoints.traefik.address=:8080
-            - --entrypoints.web.address=:80
-            - --entrypoints.websecure.address=:443
+            - --entrypoints.traefik.address=:9080
+            - --entrypoints.web.address=:8080
+            - --entrypoints.websecure.address=:8443
             - --providers.kubernetescrd
             - --providers.kubernetesingress
             - --certificatesresolvers.godaddy.acme.email=me@mydomain.io
@@ -46,11 +52,20 @@ spec:
             # - --certificatesresolvers.godaddy.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
             - --log
             - --log.level=INFO
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            # Run the container as nobody:nogroup
+            runAsUser: 65534
+            runAsGroup: 65534
+            capabilities:
+              drop:
+                - ALL
           livenessProbe:
             failureThreshold: 3
             httpGet:
               path: /ping
-              port: 8080
+              port: 9080
               scheme: HTTP
             initialDelaySeconds: 10
             periodSeconds: 10
@@ -60,12 +75,14 @@ spec:
               memory: '100Mi'
               cpu: '1000m'
           ports:
+            # The Traefik container is listening on ports > 1024 so the container
+            # can be run as a non-root user and they can bind to these ports.
             - name: web
-              containerPort: 80
-            - name: websecure
-              containerPort: 443
-            - name: admin
               containerPort: 8080
+            - name: websecure
+              containerPort: 8443
+            - name: admin
+              containerPort: 9080
           volumeMounts:
             - name: certificates
               mountPath: /etc/traefik/certs

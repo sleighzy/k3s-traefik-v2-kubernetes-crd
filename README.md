@@ -349,7 +349,7 @@ Apply the below yaml to create an `IngressRoute` that performs the following:
 - routes all traffic to the `whoami` service for requests with a host header of
   `whoami.mydomain.io` and a path of `/tls`
 
-Ensure that the prerequistes have been set up first as Traefik will attempt to
+Ensure that the prerequisites have been set up first as Traefik will attempt to
 retrieve certificates as soon as the `IngressRoute` is created.
 
 ```yaml
@@ -417,12 +417,32 @@ X-Forwarded-User:
 X-Real-Ip: 210.53.22.215
 ```
 
+### Redirect HTTP traffic to HTTPS
+
+By un-commenting the below lines from the `005-deployment.yaml` file Traefik
+will automatically redirect all incoming HTTP requests (the `web` entrypoint) to
+HTTPS (the `websecure` entrypoint).
+
+```yaml
+- --entrypoints.web.http.redirections.entrypoint.to=websecure
+- --entrypoints.web.http.redirections.entrypoint.scheme=https
+```
+
+By optionally adding the additional line below these redirections will be
+permanent redirects, i.e. `301 Moved Permanently` response status code. The
+browser will then automatically redirect to the HTTPS address and not
+continuously be redirected by Traefik.
+
+```yaml
+- --entrypoints.web.http.redirections.entrypoint.permanent=true
+```
+
 ## Traefik 2.2 and Kubernetes Ingress
 
 Traefik
 [Kubernetes Ingress](https://doc.traefik.io/traefik/providers/kubernetes-ingress/)
 provider supports
-[Kubernete Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+[Kubernetes Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
 objects for managing access to services.
 
 The `--providers.kubernetesingress` CLI parameter in the deployment manifest

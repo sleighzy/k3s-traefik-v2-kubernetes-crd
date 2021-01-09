@@ -41,6 +41,10 @@ spec:
             - --entrypoints.traefik.address=:9080
             - --entrypoints.web.address=:8080
             - --entrypoints.websecure.address=:8443
+            # Uncomment the below lines to redirect http requests to the
+            # websecure https address.
+            # - --entrypoints.web.http.redirections.entrypoint.to=websecure
+            # - --entrypoints.web.http.redirections.entrypoint.scheme=https
             - --providers.kubernetescrd
             - --providers.kubernetesingress
             - --certificatesresolvers.godaddy.acme.email=me@mydomain.io

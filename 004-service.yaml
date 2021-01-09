@@ -6,7 +6,6 @@ metadata:
   namespace: kube-system
 
 spec:
-  externalTrafficPolicy: Cluster
   # The targetPort entries are required as the Traefik container is listening on ports > 1024
   # so that the container can be run as a non-root user and they can bind to these ports.
   # Traefik is still accessed over 80 and 443 on the host, but the service routes the traffic
@@ -26,4 +25,8 @@ spec:
       targetPort: 9080
   selector:
     app: traefik
+  # Set externalTrafficPolicy to Local so that all external traffic intended for
+  # the Traefik pod goes directly to that local node. If the default of Cluster is
+  # used instead then the client source IP address is lost, and may hop between nodes.
+  externalTrafficPolicy: Local
   type: LoadBalancer

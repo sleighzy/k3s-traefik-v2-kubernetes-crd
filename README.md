@@ -277,12 +277,12 @@ Host: whoami.mydomain.io
 User-Agent: curl/7.58.0
 Accept: */*
 Accept-Encoding: gzip
-X-Forwarded-For: 10.42.1.6
+X-Forwarded-For: 210.53.22.215
 X-Forwarded-Host: whoami.mydomain.io
 X-Forwarded-Port: 80
 X-Forwarded-Proto: http
 X-Forwarded-Server: traefik-7c8b9b949f-cws5b
-X-Real-Ip: 10.42.1.6
+X-Real-Ip: 210.53.22.215
 ```
 
 ## HTTPS with LetsEncrypt
@@ -408,13 +408,13 @@ Accept-Encoding: gzip, deflate, br
 Accept-Language: en-US,en;q=0.5
 Cookie: _forward_auth=jRmJ5On5wAvIdKJ-B22_gFu0J9mMXnaxPQqUozvQYxw=|1584999044|
 Upgrade-Insecure-Requests: 1
-X-Forwarded-For: 10.42.1.6
+X-Forwarded-For: 210.53.22.215
 X-Forwarded-Host: whoami.mydomain.io
 X-Forwarded-Port: 443
 X-Forwarded-Proto: https
 X-Forwarded-Server: traefik-7c8b9b949f-cws5b
 X-Forwarded-User:
-X-Real-Ip: 10.42.1.6
+X-Real-Ip: 210.53.22.215
 ```
 
 ## Traefik 2.2 and Kubernetes Ingress

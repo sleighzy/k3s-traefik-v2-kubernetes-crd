@@ -342,7 +342,7 @@ $ kubectl apply -f 002-secrets.yaml
 Apply the below yaml to create an `IngressRoute` that performs the following:
 
 - accepts traffic from the `websecure` entry point, which was configured as the
-  port 443 address when starting Traefik
+  https entrypoint address when starting Traefik
 - uses tls and the godaddy certificate resolver, that was configured using the
   Traefik arguments when starting it, to request an https certificate from
   Godaddy if a certificate does not already exist, or is about to expire
@@ -421,10 +421,15 @@ X-Real-Ip: 210.53.22.215
 
 By un-commenting the below lines from the `005-deployment.yaml` file Traefik
 will automatically redirect all incoming HTTP requests (the `web` entrypoint) to
-HTTPS (the `websecure` entrypoint).
+HTTPS (the `websecure` entrypoint). Note that the configuration below specifies
+port `:443` and not the entrypoint name `websecure`. This is due to the
+configuration for the `websecure` entrypoint listening on port `8443`, using
+`to=websecure` instead of `to=:443` would cause the browser to be redirected to port
+`8443` incorrectly. The Traefik `service` will receive traffic on port `443` and
+send them to the container `targetPort` of `8443` that Traefik is listening.
 
 ```yaml
-- --entrypoints.web.http.redirections.entrypoint.to=websecure
+- --entrypoints.web.http.redirections.entrypoint.to=:443
 - --entrypoints.web.http.redirections.entrypoint.scheme=https
 ```
 

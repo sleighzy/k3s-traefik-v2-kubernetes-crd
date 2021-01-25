@@ -1,0 +1,37 @@
+---
+name: Lint Code Base
+
+#
+# Documentation:
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions
+#
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    name: Linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Lint Code Base
+        uses: github/super-linter@v3
+        env:
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: /
+          MARKDOWN_CONFIG_FILE: .markdownlint.json
+          # Disable Kubeval linting as manifest files with CRDs as these fail
+          # validation due to missing JSON schemas. Kubeval supports disabling the
+          # schema check, but super-linter does not support passing flags for linters
+          # https://github.com/github/super-linter/issues/891
+          # https://github.com/github/super-linter/issues/987
+          VALIDATE_KUBERNETES_KUBEVAL: false

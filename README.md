@@ -1,34 +1,33 @@
 # Kubernetes Traefik Ingress Controller CRD
 
-[Kubernetes](https://kubernetes.io/) (k8s) provides the ability for
-[Ingress Controllers](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/)
-to be deployed for directing traffic to services. This means that services can
-be exposed outside of the cluster without requiring a new loadbalancer for each
-one. An ingress can be used instead that routes traffic to services based on
-routing rules, e.g. hostname, path, headers, etc.
+![Lint Code Base]
 
-[Traefik](https://containo.us/traefik/) is a Cloud Native Edge Router and
-reverse proxy that can direct traffic between services based on routing rules.
-Traefik provides a Ingress Controller that can be deployed into Kubernetes
-clusters for these purposes. Traefik introduced a Kubernetes Custom Resource
-Definition (CRD) for
-[Ingress Routes](https://docs.traefik.io/providers/kubernetes-crd/), which is
-what the configuration in this repository is based on.
+[Kubernetes] (k8s) provides the ability for [Ingress Controllers] to be deployed
+for directing traffic to services. This means that services can be exposed
+outside of the cluster without requiring a new loadbalancer for each one. An
+ingress can be used instead that routes traffic to services based on routing
+rules, e.g. hostname, path, headers, etc.
+
+[Traefik] is a Cloud Native Edge Router and reverse proxy that can direct
+traffic between services based on routing rules. Traefik provides a Ingress
+Controller that can be deployed into Kubernetes clusters for these purposes.
+Traefik introduced a Kubernetes Custom Resource Definition (CRD) for [Ingress
+Routes], which is what the configuration in this repository is based on.
 
 ## K3s and K3d
 
-[k3s](https://k3s.io/) is a lightweight, certified Kubernetes distribution, for
-production workloads from Rancher Labs. k3s installs Traefik, version 1.7, as
-the Ingress Controller, and a service loadbalancer (klippy-lb) by default so
-that the cluster is ready to go as soon as it starts up. The instructions below
-will be deploying a k3s cluster _without_ the default Traefik 1.7 as we want to
-deploy this ourselves so that we can use the latest Traefik v2 Kubernetes
-Ingress Controller installation.
+[k3s] is a lightweight, certified Kubernetes distribution, for production
+workloads from Rancher Labs. k3s installs Traefik, version 1.7, as the Ingress
+Controller, and a service loadbalancer (klippy-lb) by default so that the
+cluster is ready to go as soon as it starts up. The instructions below will be
+deploying a k3s cluster _without_ the default Traefik 1.7 as we want to deploy
+this ourselves so that we can use the latest Traefik v2 Kubernetes Ingress
+Controller installation.
 
-[k3d](https://github.com/rancher/k3d) is tool developed by the folk at Rancher
-to deploy k3s nodes into Docker containers. This provides the means to deploy
-server and multiple worker nodes on your local machine, taking up very little
-resource, each running within its own container.
+[k3d] is tool developed by the folk at Rancher to deploy k3s nodes into Docker
+containers. This provides the means to deploy server and multiple worker nodes
+on your local machine, taking up very little resource, each running within its
+own container.
 
 k3s (using k3d) will be used as the Kubernetes distribution for the examples in
 this repository.
@@ -43,8 +42,7 @@ cluster. This performs the following:
   dropped in here for automatic deployment.
 - mounts a directory from the host machine to `/var/lib/rancher/k3s/storage` as
   this is the default directory k3s stores data in. We can create k8s
-  [Persistent Volume Claims](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
-  and they will be created here on the host machine.
+  [Persistent Volume Claims] and they will be created here on the host machine.
 - (optional) publish ports 80 and 443 to the host machine so that we can send
   external web traffic (http and https) to the cluster
 - the `--server-arg` arguments will pass `--disable traefik` to k3s when the
@@ -91,26 +89,24 @@ apply the `./002-secrets.yaml` file, and can remove the mounting of those
 secrets from the `./005-deployment.yaml` file. The later sections in this README
 file will cover the HTTPS integration in greater depth.
 
-- [001-rbac.yaml](./001-rbac.yaml) - CRDs and cluster roles
-- [001-tls-options.yaml](./001-tls-options.yaml) - this is optional, but
-  enforces by default that TLS 1.3 is to be used for secure connections
-- [002-middlewares.yaml](./002-middlewares.yaml) - this is optional, but is
-  needed if wanting to secure the Traefik dashboard using Basic Authentication
-- [002-secrets.yaml](./002-secrets.yaml) - this is optional, but is needed if
+- [001-rbac.yaml] - CRDs and cluster roles
+- [001-tls-options.yaml] - this is optional, but enforces by default that TLS
+  1.3 is to be used for secure connections
+- [002-middlewares.yaml] - this is optional, but is needed if wanting to secure
+  the Traefik dashboard using Basic Authentication
+- [002-secrets.yaml] - this is optional, but is needed if
   - using Basic Authentication for the dashboard
   - integrating with LetsEncrypt (depending on your mechanism) for API keys etc.
     for your DNS provider as per the examples further down
-- [003-pvc.yaml](./003-pvc.yaml) - this is optional, but is used when
-  integrating with LetsEncrypt as this creates a persistent volume on the host
-  machine that is used to store the certificates
-- [004-service.yaml](./004-service.yaml) - exposes the container ports for
-  traefik
-- [005-deployment.yaml](./005-deployment.yaml) - the deployment of the Traefik
-  container with the associated mounts for secrets and persistent volume if
-  integrating with LetsEncrypt for https certificates
-- [006-ingressroute.yaml](./006-ingressroute.yaml) - this is optional, but can
-  be used to expose the Traefik dashboard externally and secure using Basic
-  Authentication
+- [003-pvc.yaml] - this is optional, but is used when integrating with
+  LetsEncrypt as this creates a persistent volume on the host machine that is
+  used to store the certificates
+- [004-service.yaml] - exposes the container ports for traefik
+- [005-deployment.yaml] - the deployment of the Traefik container with the
+  associated mounts for secrets and persistent volume if integrating with
+  LetsEncrypt for https certificates
+- [006-ingressroute.yaml] - this is optional, but can be used to expose the
+  Traefik dashboard externally and secure using Basic Authentication
 
 ## Traefik Dashboard
 
@@ -288,16 +284,15 @@ X-Real-Ip: 210.53.22.215
 ## HTTPS with LetsEncrypt
 
 Traefik v2 introduced automated generation of certificates for services when
-integrating with [LetsEncrypt](https://letsencrypt.org/). When calling services
-with routers that reference the configured certificate resolver for Traefik it
-will automatically attempt to generate certificates using LetsEncrypt. Traefik
-provides a number of ACME challenger options, and a large number of supported
-providers for [DNS-01](https://docs.traefik.io/https/acme/#dnschallenge)
+integrating with [LetsEncrypt]. When calling services with routers that
+reference the configured certificate resolver for Traefik it will automatically
+attempt to generate certificates using LetsEncrypt. Traefik provides a number of
+ACME challenger options, and a large number of supported providers for [DNS-01]
 challengers. Traefik will generate new certificates for the services when they
 expire.
 
 The configuration in this repository can be used to integrate with GoDaddy for
-dns challenges as this is my DNS provider. The `...caserver` argument in for
+dns challenges as this is my DNS provider. The `...caserver` argument for
 Traefik in the `./005-deployment.yaml` is for the LetsEncrypt Staging server,
 currently commented out, and can be used for initial testing purposes. Note that
 staging server will require you to add an intermediate certificate as it is not
@@ -309,8 +304,8 @@ Traefik requires the certificates file to have permissions of 600. If running on
 Windows with WSL (Windows Subsystem Linux) directories and files created on the
 Windows filesystem will have permissions of 777 and so this will fail. You will
 need to update (add if it doesn't exist) your /etc/wsl.conf file to add metadata
-to mounted filesystems so that the correct permissions can be set on the file in
-WSL. See <https://www.turek.dev/post/fix-wsl-file-permissions/> for more
+to mounted file systems so that the correct permissions can be set on the file
+in WSL. See <https://www.turek.dev/post/fix-wsl-file-permissions/> for more
 information.
 
 ### Prerequisites for certificate generation
@@ -349,7 +344,7 @@ Apply the below yaml to create an `IngressRoute` that performs the following:
 - routes all traffic to the `whoami` service for requests with a host header of
   `whoami.mydomain.io` and a path of `/tls`
 
-Ensure that the prerequistes have been set up first as Traefik will attempt to
+Ensure that the prerequisites have been set up first as Traefik will attempt to
 retrieve certificates as soon as the `IngressRoute` is created.
 
 ```yaml
@@ -419,20 +414,43 @@ X-Real-Ip: 210.53.22.215
 
 ## Traefik 2.2 and Kubernetes Ingress
 
-Traefik
-[Kubernetes Ingress](https://doc.traefik.io/traefik/providers/kubernetes-ingress/)
-provider supports
-[Kubernete Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
-objects for managing access to services.
+The Traefik [Kubernetes Ingress] provider supports Kubernetes [Ingress] objects
+for managing access to services.
 
 The `--providers.kubernetesingress` CLI parameter in the deployment manifest
 enables using this provider to configure Traefik. This provider be can run with
 the Kubernetes CRD one enabled as well, `--providers.kubernetescrd`, so that
 both options are supported.
 
-The [300-whoami-ingress.yaml](./300-whoami-ingress.yaml) manifest file can be
-applied instead of the
-[200-whoami-ingressroute.yaml](./200-whoami-ingressroute.yaml) file to use the
-Kubernetes Ingress to provide access to the whoami service. This example ingress
-also shows the use of the annotation support that was added in Traefik 2.2 for
-these objects for things such as the entry point and tls configuration.
+The [300-whoami-ingress.yaml] manifest file can be applied instead of the
+[200-whoami-ingressroute.yaml] file to use the Kubernetes Ingress to provide
+access to the whoami service. This example ingress also shows the use of the
+annotation support that was added in Traefik 2.2 for these objects for things
+such as the entry point and tls configuration.
+
+[001-rbac.yaml]: ./001-rbac.yaml
+[001-tls-options.yaml]: ./001-tls-options.yaml
+[002-middlewares.yaml]: ./002-middlewares.yaml
+[002-secrets.yaml]: ./002-secrets.yaml
+[003-pvc.yaml]: ./003-pvc.yaml
+[004-service.yaml]: ./004-service.yaml
+[005-deployment.yaml]: ./005-deployment.yaml
+[006-ingressroute.yaml]: ./006-ingressroute.yaml
+[200-whoami-ingressroute.yaml]: ./200-whoami-ingressroute.yaml
+[300-whoami-ingress.yaml]: ./300-whoami-ingress.yaml
+[dns-01]: https://docs.traefik.io/https/acme/#dnschallenge
+[ingress]: https://kubernetes.io/docs/concepts/services-networking/ingress/
+[ingress controllers]:
+  https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
+[ingress routes]: https://docs.traefik.io/providers/kubernetes-crd/
+[k3d]: https://github.com/rancher/k3d
+[k3s]: https://k3s.io/
+[kubernetes]: https://kubernetes.io/
+[kubernetes ingress]:
+  https://doc.traefik.io/traefik/providers/kubernetes-ingress/
+[letsencrypt]: https://letsencrypt.org/
+[lint code base]:
+  https://github.com/sleighzy/k3s-traefik-v2-kubernetes-crd/workflows/Lint%20Code%20Base/badge.svg
+[persistent volume claims]:
+  https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+[traefik]: https://containo.us/traefik/

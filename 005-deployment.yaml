@@ -41,6 +41,13 @@ spec:
             - --entrypoints.traefik.address=:9080
             - --entrypoints.web.address=:8080
             - --entrypoints.websecure.address=:8443
+            # Uncomment the below lines to redirect http requests to https.
+            # This specifies the port :443 and not the https entrypoint name for the
+            # redirect as the service is listening on port 443 and directing traffic
+            # to the 8443 target port. If the entrypoint name "websecure" was used,
+            # instead of "to=:443", then the browser would be redirected to port 8443.
+            # - --entrypoints.web.http.redirections.entrypoint.to=:443
+            # - --entrypoints.web.http.redirections.entrypoint.scheme=https
             - --providers.kubernetescrd
             - --providers.kubernetesingress
             - --certificatesresolvers.godaddy.acme.email=me@mydomain.io

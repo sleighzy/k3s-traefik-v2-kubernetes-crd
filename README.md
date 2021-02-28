@@ -90,23 +90,26 @@ secrets from the `./005-deployment.yaml` file. The later sections in this README
 file will cover the HTTPS integration in greater depth.
 
 - [001-rbac.yaml] - CRDs and cluster roles
-- [001-tls-options.yaml] - this is optional, but enforces by default that TLS
-  1.3 is to be used for secure connections
-- [002-middlewares.yaml] - this is optional, but is needed if wanting to secure
-  the Traefik dashboard using Basic Authentication
-- [002-secrets.yaml] - this is optional, but is needed if
+- [001-tls-options.yaml] - (optional), enforces by default that TLS 1.3 is to be
+  used for secure connections
+- [002-middlewares-basic-auth.yaml] - (optional), provides username / password
+  authentication and is used in these examples for securing the Traefik
+  dashboard using Basic Authentication
+  - [002-middlewares-secure-headers.yaml] - (optional), this creates a
+    middleware that can be used to set secure headers on responses
+- [002-secrets.yaml] - (optional), but is needed if
   - using Basic Authentication for the dashboard
   - integrating with LetsEncrypt (depending on your mechanism) for API keys etc.
     for your DNS provider as per the examples further down
-- [003-pvc.yaml] - this is optional, but is used when integrating with
-  LetsEncrypt as this creates a persistent volume on the host machine that is
-  used to store the certificates
+- [003-pvc.yaml] - (optional), but is used when integrating with LetsEncrypt as
+  this creates a persistent volume on the host machine that is used to store the
+  certificates
 - [004-service.yaml] - exposes the container ports for traefik
 - [005-deployment.yaml] - the deployment of the Traefik container with the
   associated mounts for secrets and persistent volume if integrating with
   LetsEncrypt for https certificates
-- [006-ingressroute.yaml] - this is optional, but can be used to expose the
-  Traefik dashboard externally and secure using Basic Authentication
+- [006-ingressroute.yaml] - (optional), can be used to expose the Traefik
+  dashboard externally and secure using Basic Authentication
 
 ## Traefik Dashboard
 
@@ -419,9 +422,10 @@ will automatically redirect all incoming HTTP requests (the `web` entrypoint) to
 HTTPS (the `websecure` entrypoint). Note that the configuration below specifies
 port `:443` and not the entrypoint name `websecure`. This is due to the
 configuration for the `websecure` entrypoint listening on port `8443`, using
-`to=websecure` instead of `to=:443` would cause the browser to be redirected to port
-`8443` incorrectly. The Traefik `service` will receive traffic on port `443` and
-send them to the container `targetPort` of `8443` that Traefik is listening.
+`to=websecure` instead of `to=:443` would cause the browser to be redirected to
+port `8443` incorrectly. The Traefik `service` will receive traffic on port
+`443` and send them to the container `targetPort` of `8443` that Traefik is
+listening.
 
 ```yaml
 - --entrypoints.web.http.redirections.entrypoint.to=:443
@@ -436,6 +440,38 @@ continuously be redirected by Traefik.
 ```yaml
 - --entrypoints.web.http.redirections.entrypoint.permanent=true
 ```
+
+## Secure Headers Middleware
+
+The `002-middleware-secure-headers.yaml` manifest file can be applied and then
+the middleware used in your ingress routes. This middleware sets a number of
+response headers to secure your sites. For example,
+
+- Strict-Transport-Security (HSTS)
+- Content Security Policy (CSP)
+- Referrer-Policy
+- Vary
+- X-Content-Type-Options
+- X-Frame-Options
+- X-XSS-Protection
+
+The middleware can be added to your ingress route as per the example below:
+
+```yaml
+routes:
+  - kind: Rule
+    match: Host(`whoami.mydomain.io`)
+    middlewares:
+      - name: traefik-secure-headers
+        namespace: kube-system
+    services:
+      - name: whoami
+        port: 80
+```
+
+The <https://observatory.mozilla.org/> site can be used to scan your site and
+analyze your security headers. It can provide a score and information on changes
+required to headers to achieve an A+ rating.
 
 ## Traefik 2.2 and Kubernetes Ingress
 
@@ -455,7 +491,8 @@ such as the entry point and tls configuration.
 
 [001-rbac.yaml]: ./001-rbac.yaml
 [001-tls-options.yaml]: ./001-tls-options.yaml
-[002-middlewares.yaml]: ./002-middlewares.yaml
+[002-middlewares-basic-auth.yaml]: ./002-middlewares-basic-auth.yaml
+[002-middlewares-secure-headers.yaml]: ./002-middlewares-secure-headers.yaml
 [002-secrets.yaml]: ./002-secrets.yaml
 [003-pvc.yaml]: ./003-pvc.yaml
 [004-service.yaml]: ./004-service.yaml

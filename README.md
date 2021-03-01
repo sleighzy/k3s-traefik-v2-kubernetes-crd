@@ -156,8 +156,8 @@ data:
     Ui4KCg==
 ```
 
-The `002.middlewares.yaml` file contains the middleware configuration to state
-that Basic Authentication is to be used, and where to locate the secret
+The `002.middlewares-basic-auth.yaml` file contains the middleware configuration
+to state that Basic Authentication is to be used, and where to locate the secret
 containing the username and password.
 
 The `006-ingressroute.yaml` file contains the below `IngressRoute` definition

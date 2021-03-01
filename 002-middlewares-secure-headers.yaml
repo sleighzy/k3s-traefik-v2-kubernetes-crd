@@ -1,0 +1,35 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: traefik-secure-headers
+  namespace: kube-system
+spec:
+  headers:
+    # CSP Headers
+    accessControlAllowMethods:
+      - GET
+      - POST
+    accessControlAllowOriginList:
+      - https://*.sleighzy.io
+      - https://sleighzy.io
+    accessControlMaxAge: 100
+    contentSecurityPolicy: |
+      default-src 'none'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'
+    # Vary: Origin
+    addVaryHeader: true
+    # X-XSS-Protection: 1; mode=block
+    browserXssFilter: true
+    # X-Content-Type-Options: nosniff
+    contentTypeNosniff: true
+    # HSTS Headers
+    # Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+    forceSTSHeader: true
+    stsIncludeSubdomains: true
+    stsPreload: true
+    stsSeconds: 63072000
+    # X-Frame-Options: DENY
+    frameDeny: true
+    # Referrer-Policy: same-origin
+    referrerPolicy: 'same-origin'
+    sslRedirect: true

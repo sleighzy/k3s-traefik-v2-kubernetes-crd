@@ -95,8 +95,8 @@ file will cover the HTTPS integration in greater depth.
 - [002-middlewares-basic-auth.yaml] - (optional), provides username / password
   authentication and is used in these examples for securing the Traefik
   dashboard using Basic Authentication
-  - [002-middlewares-secure-headers.yaml] - (optional), this creates a
-    middleware that can be used to set secure headers on responses
+- [002-middlewares-secure-headers.yaml] - (optional), this creates a middleware
+  that can be used to set secure headers on responses
 - [002-secrets.yaml] - (optional), but is needed if
   - using Basic Authentication for the dashboard
   - integrating with LetsEncrypt (depending on your mechanism) for API keys etc.

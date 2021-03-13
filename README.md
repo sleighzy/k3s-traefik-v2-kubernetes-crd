@@ -66,6 +66,35 @@ $ export KUBECONFIG="$(k3d kubeconfig get sleighzy)"
 $ kubectl cluster-info
 ```
 
+### AppArmor
+
+The Traefik and whoami deployment files contain annotations for using `apparmor`
+for securing running containers. When running with k3d the pods may be stuck in
+a blocked state, using `describe` will show that this is due to AppArmor.
+
+```sh
+$ kubectl describe -n kube-system pod/traefik-6d4bb89c67-bggs8
+Name:           traefik-6d4bb89c67-bggs8
+Namespace:      kube-system
+Priority:       0
+Node:           k3d-sleighzy-agent-1/172.21.0.4
+Start Time:     Sun, 14 Mar 2021 10:40:10 +1300
+Labels:         app=traefik
+                pod-template-hash=6d4bb89c67
+Annotations:    container.apparmor.security.beta.kubernetes.io/traefik: runtime/default
+Status:         Pending
+Reason:         AppArmor
+Message:        Cannot enforce AppArmor: AppArmor is not enabled on the host
+```
+
+Comment out the below annotation in the `005-deployment.yaml` and
+`100-whoami.yaml` files prior to applying them so that AppArmor isn't used.
+
+```yaml
+# annotations:
+#   container.apparmor.security.beta.kubernetes.io/traefik: runtime/default
+```
+
 ## Install Traefik Kubernetes CRD Ingress Controller
 
 k3s ships with Traefik 1.7 by default so we need to install Traefik 2 separately
@@ -89,7 +118,8 @@ apply the `./002-secrets.yaml` file, and can remove the mounting of those
 secrets from the `./005-deployment.yaml` file. The later sections in this README
 file will cover the HTTPS integration in greater depth.
 
-- [001-rbac.yaml] - CRDs and cluster roles
+- [001-crd.yaml] - CRDs
+- [001-rbac.yaml] - cluster roles
 - [001-tls-options.yaml] - (optional), enforces by default that TLS 1.3 is to be
   used for secure connections
 - [002-middlewares-basic-auth.yaml] - (optional), provides username / password
@@ -489,6 +519,7 @@ access to the whoami service. This example ingress also shows the use of the
 annotation support that was added in Traefik 2.2 for these objects for things
 such as the entry point and tls configuration.
 
+[001-crd.yaml]: ./001-crd.yaml
 [001-rbac.yaml]: ./001-rbac.yaml
 [001-tls-options.yaml]: ./001-tls-options.yaml
 [002-middlewares-basic-auth.yaml]: ./002-middlewares-basic-auth.yaml

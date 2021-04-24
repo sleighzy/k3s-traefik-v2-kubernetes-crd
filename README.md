@@ -14,7 +14,24 @@ Controller that can be deployed into Kubernetes clusters for these purposes.
 Traefik introduced a Kubernetes Custom Resource Definition (CRD) for [Ingress
 Routes], which is what the configuration in this repository is based on.
 
-## K3s and K3d
+- [Rancher K3s]
+  - [k3s v1.21.0+k3s1]
+- [Rancher K3d]
+- [Deploy k3s cluster using k3d]
+  - [AppArmor]
+- [Install Traefik Kubernetes CRD Ingress Controller]
+- [Traefik Dashboard]
+  - [Basic Authentication]
+- [Deploy the whoami service and use Traefik 2 IngressRoute]
+  - [Invoke whoami service exposed via Traefik]
+- [HTTPS with LetsEncrypt]
+  - [Prerequisites for certificate generation]
+  - [Route https traffic to the whoami service]
+  - [Redirect HTTP traffic to HTTPS]
+- [Secure Headers Middleware]
+- [Traefik 2.2 and Kubernetes Ingress]
+
+## Rancher K3s
 
 [k3s] is a lightweight, certified Kubernetes distribution, for production
 workloads from Rancher Labs. k3s installs Traefik, version 1.7, as the Ingress
@@ -23,6 +40,22 @@ cluster is ready to go as soon as it starts up. The instructions below will be
 deploying a k3s cluster _without_ the default Traefik 1.7 as we want to deploy
 this ourselves so that we can use the latest Traefik v2 Kubernetes Ingress
 Controller installation.
+
+### k3s v1.21.0+k3s1
+
+_Update 4th May 2021:_ The upcoming K3s `v1.21.0+k3s1` release looks to be
+including core support for Traefik v2 instead of Traefik 1.7. This repository
+will continue to be maintained as:
+
+- it is not specific to k3s and should support other k8s distributions
+- people will be on older releases of k3s for some time
+- it contains additional helpful configuration and examples than that provided
+  in the default installation
+
+Once released this repository will be updated to contain documentation and
+manifest files supporting the different versions of k3s.
+
+## Rancher K3d
 
 [k3d] is tool developed by the folk at Rancher to deploy k3s nodes into Docker
 containers. This provides the means to deploy server and multiple worker nodes
@@ -34,7 +67,7 @@ this repository.
 
 ## Deploy k3s cluster using k3d
 
-Run the below command (`sleighzy` is my cluster name) to deploy a 2 work node
+Run the below command (`sleighzy` is my cluster name) to deploy a 2 worker node
 cluster. This performs the following:
 
 - mounts a directory on the host machine to
@@ -531,13 +564,24 @@ such as the entry point and tls configuration.
 [006-ingressroute.yaml]: ./006-ingressroute.yaml
 [200-whoami-ingressroute.yaml]: ./200-whoami-ingressroute.yaml
 [300-whoami-ingress.yaml]: ./300-whoami-ingress.yaml
+[apparmor]: #apparmor
+[basic authentication]: #basic-authentication
 [dns-01]: https://docs.traefik.io/https/acme/#dnschallenge
 [ingress]: https://kubernetes.io/docs/concepts/services-networking/ingress/
+[deploy k3s cluster using k3d]: #deploy-k3s-cluster-using-k3d
+[deploy the whoami service and use traefik 2 ingressroute]:
+  #deploy-the-whoami-service-and-use-traefik-2-ingressroute
+[https with letsencrypt]: #https-with-letsencrypt
 [ingress controllers]:
   https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/
 [ingress routes]: https://docs.traefik.io/providers/kubernetes-crd/
+[install traefik kubernetes crd ingress controller]:
+  #install-traefik-kubernetes-crd-ingress-controller
+[invoke whoami service exposed via traefik]:
+  #invoke-whoami-service-exposed-via-traefik
 [k3d]: https://github.com/rancher/k3d
 [k3s]: https://k3s.io/
+[k3s v1.21.0+k3s1]: #k3s-v1210-k3s1
 [kubernetes]: https://kubernetes.io/
 [kubernetes ingress]:
   https://doc.traefik.io/traefik/providers/kubernetes-ingress/
@@ -546,4 +590,14 @@ such as the entry point and tls configuration.
   https://github.com/sleighzy/k3s-traefik-v2-kubernetes-crd/workflows/Lint%20Code%20Base/badge.svg
 [persistent volume claims]:
   https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+[prerequisites for certificate generation]:
+  #prerequisites-for-certificate-generation
+[rancher k3d]: #rancher-k3d
+[rancher k3s]: #rancher-k3s
+[redirect http traffic to https]: #redirect-http-traffic-to-https
+[route https traffic to the whoami service]:
+  #route-https-traffic-to-the-whoami-service
+[secure headers middleware]: #secure-headers-middleware
 [traefik]: https://containo.us/traefik/
+[traefik 2.2 and kubernetes ingress]: #traefik-22-and-kubernetes-ingress
+[traefik dashboard]: #traefik-dashboard

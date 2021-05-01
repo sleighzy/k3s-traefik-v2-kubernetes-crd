@@ -552,6 +552,10 @@ access to the whoami service. This example ingress also shows the use of the
 annotation support that was added in Traefik 2.2 for these objects for things
 such as the entry point and tls configuration.
 
+## License
+
+[![MIT license]](https://lbesson.mit-license.org/)
+
 [001-crd.yaml]: ./001-crd.yaml
 [001-rbac.yaml]: ./001-rbac.yaml
 [001-tls-options.yaml]: ./001-tls-options.yaml
@@ -588,6 +592,7 @@ such as the entry point and tls configuration.
 [letsencrypt]: https://letsencrypt.org/
 [lint code base]:
   https://github.com/sleighzy/k3s-traefik-v2-kubernetes-crd/workflows/Lint%20Code%20Base/badge.svg
+[mit license]: https://img.shields.io/badge/License-MIT-blue.svg
 [persistent volume claims]:
   https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 [prerequisites for certificate generation]:

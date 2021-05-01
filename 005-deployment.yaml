@@ -31,6 +31,13 @@ spec:
         # Use nogroup (and needs nobody) for the acme.json file
         # for storing TLS
         fsGroup: 65534
+      initContainers:
+        - name: volume-permissions
+          image: busybox:1.32
+          command: ['sh', '-c', 'chmod -Rv 600 /etc/traefik/certs/*']
+          volumeMounts:
+            - name: certificates
+              mountPath: /etc/traefik/certs
       containers:
         - name: traefik
           image: traefik:v2.4

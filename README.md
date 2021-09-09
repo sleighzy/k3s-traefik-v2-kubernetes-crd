@@ -34,26 +34,27 @@ Routes], which is what the configuration in this repository is based on.
 ## Rancher K3s
 
 [k3s] is a lightweight, certified Kubernetes distribution, for production
-workloads from Rancher Labs. k3s installs Traefik, version 1.7, as the Ingress
-Controller, and a service loadbalancer (klippy-lb) by default so that the
-cluster is ready to go as soon as it starts up. The instructions below will be
-deploying a k3s cluster _without_ the default Traefik 1.7 as we want to deploy
-this ourselves so that we can use the latest Traefik v2 Kubernetes Ingress
-Controller installation.
+workloads from Rancher Labs. k3s installs Traefik as the Ingress Controller, and
+a service loadbalancer (klippy-lb) by default so that the cluster is ready to go
+as soon as it starts up. K3s previously installed Traefik 1.7, and more recently
+Traefik 2.5. The instructions below will be deploying a k3s cluster _without_
+the default Traefik installation as we want to deploy this ourselves so that we
+can use the latest Traefik v2 release, version 2.5 at time of writing, and the
+Kubernetes Ingress Controller.
 
 ### k3s v1.21.0+k3s1
 
-_Update 4th May 2021:_ The upcoming K3s `v1.21.0+k3s1` release looks to be
-including core support for Traefik v2 instead of Traefik 1.7. This repository
-will continue to be maintained as:
+The K3s `v1.21.0+k3s1` release includes core support for Traefik v2.4 instead of
+Traefik 1.7. This repository will continue to be maintained as:
 
-- it is not specific to k3s and should support other k8s distributions
+- it uses Traefik 2.5 vs. 2.4
 - people will be on older releases of k3s for some time
+- it is not specific to k3s and should support other k8s distributions
 - it contains additional helpful configuration and examples than that provided
   in the default installation
 
-Once released this repository will be updated to contain documentation and
-manifest files supporting the different versions of k3s.
+This repository will be updated to contain documentation and manifest files
+supporting the different versions of k3s.
 
 ## Rancher K3d
 
@@ -79,7 +80,7 @@ cluster. This performs the following:
 - (optional) publish ports 80 and 443 to the host machine so that we can send
   external web traffic (http and https) to the cluster
 - the `--server-arg` arguments will pass `--disable traefik` to k3s when the
-  cluster is created so that the default Traefik 1.7 ingress controller is not
+  cluster is created so that the default Traefik ingress controller is not
   installed
 
 ```sh
@@ -130,16 +131,13 @@ Comment out the below annotation in the `005-deployment.yaml` and
 
 ## Install Traefik Kubernetes CRD Ingress Controller
 
-k3s ships with Traefik 1.7 by default so we need to install Traefik 2 separately
-using the manifests in this repository as the `--disable traefik` arguments we
-used mean that Traefik is not installed.
+k3s ships with Traefik 1.7 or Traefik 2.4 by default, depending on the release
+version, so we need to install Traefik v2 separately using the manifests in this
+repository. The `--disable traefik` arguments used will mean that Traefik is not
+installed.
 
 Apply the manifests in order (prefixed by number) to install the secrets, k8s
-CRDs, service, and deployment for Traefik v2. The Traefik documentation for the
-new Kubernetes CRD Ingress Controller is somewhat incomplete is places, their
-largest example is integrating with LetsEncrypt, and some errors were output to
-the logs around missing CRDs. I have fixed this up and the configuration here
-should work as expected.
+CRDs, service, and deployment for Traefik v2.
 
 Note that the secrets, and their usage in the deployment, will be required if
 you are using Traefik and the integration with LetsEncrypt for automatic
@@ -202,9 +200,8 @@ Create a username and password using the command below that can then be added to
 the `002-secrets.yaml` file.
 
 ```sh
-$ htpasswd -nb mysecretuser mysecretpw | openssl base64
-bXlzZWNyZXR1c2VyOiRhcHIxJHNnaDNiRmlqJHI4TU5JWi9Pbkg1NVhraTBnL0FM
-Ui4KCg==
+$ htpasswd -nb mysecretuser mysecretpassword | base64
+bXlzZWNyZXR1c2VyOiRhcHIxJDR3S2VpZFhnJHoxdWN6b2VSc0MyZ0hFWUJGMjdmTzAKCg==
 ```
 
 Note in the example config below the `|2`, this means that the following lines
@@ -215,8 +212,7 @@ whitespace characters.
 ```yaml
 data:
   users: |2
-    bXlzZWNyZXR1c2VyOiRhcHIxJHNnaDNiRmlqJHI4TU5JWi9Pbkg1NVhraTBnL0FM
-    Ui4KCg==
+    bXlzZWNyZXR1c2VyOiRhcHIxJDR3S2VpZFhnJHoxdWN6b2VSc0MyZ0hFWUJGMjdmTzAKCg==
 ```
 
 The `002.middlewares-basic-auth.yaml` file contains the middleware configuration

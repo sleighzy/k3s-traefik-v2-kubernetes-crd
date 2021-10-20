@@ -79,9 +79,9 @@ cluster. This performs the following:
   [Persistent Volume Claims] and they will be created here on the host machine.
 - (optional) publish ports 80 and 443 to the host machine so that we can send
   external web traffic (http and https) to the cluster
-- the `--server-arg` arguments will pass `--disable traefik` to k3s when the
-  cluster is created so that the default Traefik ingress controller is not
-  installed
+- the `--k3s-arg` argument will pass the `--disable=traefik` flag to the k3s
+  server nodes when the cluster is created so that the default Traefik ingress
+  controller is not installed
 
 ```sh
 $ k3d cluster create \
@@ -92,8 +92,7 @@ $ k3d cluster create \
   --port "80:80@loadbalancer" \
   --port "443:443@loadbalancer" \
   --agents 2 \
-  --k3s-server-arg --disable \
-  --k3s-server-arg traefik
+  --k3s-arg "--disable=traefik@server:*"
 
 $ export KUBECONFIG="$(k3d kubeconfig get sleighzy)"
 
@@ -133,7 +132,7 @@ Comment out the below annotation in the `005-deployment.yaml` and
 
 k3s ships with Traefik 1.7 or Traefik 2.4 by default, depending on the release
 version, so we need to install Traefik v2 separately using the manifests in this
-repository. The `--disable traefik` arguments used will mean that Traefik is not
+repository. The `--disable=traefik` argument used will mean that Traefik is not
 installed.
 
 Apply the manifests in order (prefixed by number) to install the secrets, k8s

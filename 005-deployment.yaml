@@ -34,7 +34,7 @@ spec:
       initContainers:
         - name: volume-permissions
           image: busybox:1.32
-          command: ['sh', '-c', 'chmod -Rv 600 /etc/traefik/certs/*']
+          command: ['sh', '-c', 'touch /etc/traefik/certs/acme.json && chmod 600 /etc/traefik/certs/acme.json']
           volumeMounts:
             - name: certificates
               mountPath: /etc/traefik/certs

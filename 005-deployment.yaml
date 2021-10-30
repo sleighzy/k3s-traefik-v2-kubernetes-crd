@@ -56,6 +56,7 @@ spec:
             # - --entrypoints.web.http.redirections.entrypoint.to=:443
             # - --entrypoints.web.http.redirections.entrypoint.scheme=https
             - --providers.kubernetescrd
+            - --providers.kubernetescrd.allowCrossNamespace=true
             - --providers.kubernetesingress
             - --certificatesresolvers.godaddy.acme.email=me@mydomain.io
             - --certificatesresolvers.godaddy.acme.storage=/etc/traefik/certs/acme.json

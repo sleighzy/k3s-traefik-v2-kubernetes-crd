@@ -28,6 +28,7 @@ Routes], which is what the configuration in this repository is based on.
   - [Prerequisites for certificate generation]
   - [Route https traffic to the whoami service]
   - [Redirect HTTP traffic to HTTPS]
+- [Accessing Resources in Other Namespaces]
 - [Secure Headers Middleware]
 - [Traefik 2.2 and Kubernetes Ingress]
 
@@ -498,6 +499,16 @@ continuously be redirected by Traefik.
 ```yaml
 - --entrypoints.web.http.redirections.entrypoint.permanent=true
 ```
+
+## Accessing Resources in Other Namespaces
+
+In Traefik v2.4.10 a change was made so that by default it was not possible to
+reference resources in other namespaces. To enable this the Traefik
+`providers.kubernetescrd.allowCrossNamespace` configuration property needs to
+be set to a value of `true`. For example, a "global" middleware could be created
+within the same namespace as the Traefik deployment to provide secure headers in
+responses. The `allowCrossNamespace` value must be `true` for ingress routes in
+other Kubernetes namespaces to be able to use this middleware in their configuration.
 
 ## Secure Headers Middleware
 

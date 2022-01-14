@@ -40,7 +40,7 @@ spec:
               mountPath: /etc/traefik/certs
       containers:
         - name: traefik
-          image: traefik:v2.5.4
+          image: traefik:v2.5.6
           args:
             - --api.dashboard=true
             - --ping=true

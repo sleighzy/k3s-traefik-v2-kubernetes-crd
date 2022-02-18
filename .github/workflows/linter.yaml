@@ -35,3 +35,4 @@ jobs:
           # https://github.com/github/super-linter/issues/891
           # https://github.com/github/super-linter/issues/987
           VALIDATE_KUBERNETES_KUBEVAL: false
+          VALIDATE_NATURAL_LANGUAGE: false

@@ -598,6 +598,8 @@ access to the whoami service.
 [200-whoami-ingressroute.yaml]: ./200-whoami-ingressroute.yaml
 [300-whoami-ingress.yaml]: ./300-whoami-ingress.yaml
 [400-whoami-httproute.yaml]: ./400-whoami-httproute.yaml
+[Accessing Resources in Other Namespaces]:
+  #accessing-resources-in-other-namespaces
 [apparmor]: #apparmor
 [basic authentication]: #basic-authentication
 [dns-01]: https://docs.traefik.io/https/acme/#dnschallenge

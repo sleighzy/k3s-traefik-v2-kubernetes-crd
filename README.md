@@ -31,6 +31,7 @@ Routes], which is what the configuration in this repository is based on.
 - [Accessing Resources in Other Namespaces]
 - [Secure Headers Middleware]
 - [Traefik 2.2 and Kubernetes Ingress]
+- [Traefik 2.6 and the Kubernetes Gateway API]
 
 ## Rancher K3s
 
@@ -40,7 +41,7 @@ a service loadbalancer (klippy-lb) by default so that the cluster is ready to go
 as soon as it starts up. K3s previously installed Traefik 1.7, and more recently
 Traefik 2.5.0. The instructions below will be deploying a k3s cluster _without_
 the default Traefik installation as we want to deploy this ourselves so that we
-can use the latest Traefik v2 release, version 2.5 at time of writing, and the
+can use the latest Traefik v2 release, version 2.6 at time of writing, and the
 Kubernetes Ingress Controller.
 
 ### k3s v1.21.0+k3s1
@@ -49,8 +50,8 @@ The K3s `v1.21.0+k3s1` release includes core support for Traefik v2.4 instead of
 Traefik 1.7. This is now v2.5.0 in later K3s releases. This repository will
 however continue to be maintained as:
 
-- it attempts to remain on the latest Traefik releases, v2.5.6 at time of writing,
-  vs. 2.5.0
+- it attempts to remain on the latest Traefik releases, v2.6.1 at time of
+  writing, vs. 2.5.0
 - people will be on older releases of k3s for some time
 - it is not specific to k3s and should support other k8s distributions
 - it contains additional helpful configuration and examples than that provided
@@ -173,6 +174,8 @@ file will cover the HTTPS integration in greater depth.
   LetsEncrypt for https certificates
 - [006-ingressroute.yaml] - (optional), can be used to expose the Traefik
   dashboard externally and secure using Basic Authentication
+- [050-gateway-api.yaml] - (optional), creates the `GatewayClass` and `Gateway`
+  for the new Kubernetes Gateway API
 
 ## Traefik Dashboard
 
@@ -506,11 +509,12 @@ continuously be redirected by Traefik.
 
 In Traefik v2.4.10 a change was made so that by default it was not possible to
 reference resources in other namespaces. To enable this the Traefik
-`providers.kubernetescrd.allowCrossNamespace` configuration property needs to
-be set to a value of `true`. For example, a "global" middleware could be created
+`providers.kubernetescrd.allowCrossNamespace` configuration property needs to be
+set to a value of `true`. For example, a "global" middleware could be created
 within the same namespace as the Traefik deployment to provide secure headers in
 responses. The `allowCrossNamespace` value must be `true` for ingress routes in
-other Kubernetes namespaces to be able to use this middleware in their configuration.
+other Kubernetes namespaces to be able to use this middleware in their
+configuration.
 
 ## Secure Headers Middleware
 
@@ -560,6 +564,22 @@ access to the whoami service. This example ingress also shows the use of the
 annotation support that was added in Traefik 2.2 for these objects for things
 such as the entry point and tls configuration.
 
+## Traefik 2.6 and the Kubernetes Gateway API
+
+Traefik provides an implementation of the new [Kubernetes Gateway API] for
+gateway and service networking. The Traefik provider for this gateway API has
+been upgraded to support version v1alpha2 of the specification. This support is
+still experimental within Traefik.
+
+The `--providers.kubernetesgateway` and `--experimental.kubernetesgateway=true`
+CLI parameters in the deployment manifest enable this experimental provider. The
+[050-gateway-api.yaml] manifest file needs to be applied to create the
+`GatewayClass` and `Gateway`.
+
+The [400-whoami-httproute.yaml] manifest file can be applied instead of the
+[200-whoami-ingressroute.yaml] file to use the Kubernetes Gateway API to provide
+access to the whoami service.
+
 ## License
 
 [![MIT license]](https://lbesson.mit-license.org/)
@@ -573,9 +593,11 @@ such as the entry point and tls configuration.
 [003-pvc.yaml]: ./003-pvc.yaml
 [004-service.yaml]: ./004-service.yaml
 [005-deployment.yaml]: ./005-deployment.yaml
+[050-gateway-api.yaml]: ./050-gateway-api.yaml
 [006-ingressroute.yaml]: ./006-ingressroute.yaml
 [200-whoami-ingressroute.yaml]: ./200-whoami-ingressroute.yaml
 [300-whoami-ingress.yaml]: ./300-whoami-ingress.yaml
+[400-whoami-httproute.yaml]: ./400-whoami-httproute.yaml
 [apparmor]: #apparmor
 [basic authentication]: #basic-authentication
 [dns-01]: https://docs.traefik.io/https/acme/#dnschallenge
@@ -595,6 +617,7 @@ such as the entry point and tls configuration.
 [k3s]: https://k3s.io/
 [k3s v1.21.0+k3s1]: #k3s-v1210-k3s1
 [kubernetes]: https://kubernetes.io/
+[kubernetes gateway api]: https://gateway-api.sigs.k8s.io/
 [kubernetes ingress]:
   https://doc.traefik.io/traefik/providers/kubernetes-ingress/
 [letsencrypt]: https://letsencrypt.org/
@@ -613,4 +636,6 @@ such as the entry point and tls configuration.
 [secure headers middleware]: #secure-headers-middleware
 [traefik]: https://containo.us/traefik/
 [traefik 2.2 and kubernetes ingress]: #traefik-22-and-kubernetes-ingress
+[traefik 2.6 and the kubernetes gateway api]:
+  #traefik-26-and-the-kubernetes-gateway-api
 [traefik dashboard]: #traefik-dashboard

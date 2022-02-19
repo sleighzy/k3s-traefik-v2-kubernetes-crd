@@ -1,0 +1,22 @@
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: GatewayClass
+metadata:
+  name: traefik
+spec:
+  # Controller is a domain/path string that indicates
+  # the controller that is managing Gateways of this class.
+  controllerName: traefik.io/gateway-controller
+
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: Gateway
+metadata:
+  name: traefik-gateway
+  namespace: default
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: web
+      port: 8080
+      protocol: HTTP

@@ -59,6 +59,8 @@ spec:
             - --providers.kubernetescrd.allowCrossNamespace=true
             - --providers.kubernetesingress
             - --certificatesresolvers.godaddy.acme.email=me@mydomain.io
+            - --providers.kubernetesgateway
+            - --experimental.kubernetesgateway=true
             - --certificatesresolvers.godaddy.acme.storage=/etc/traefik/certs/acme.json
             - --certificatesResolvers.godaddy.acme.dnsChallenge.provider=godaddy
             - --certificatesResolvers.godaddy.acme.dnsChallenge.delayBeforeCheck=0

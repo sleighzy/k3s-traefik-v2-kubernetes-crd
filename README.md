@@ -39,19 +39,19 @@ Routes], which is what the configuration in this repository is based on.
 workloads from Rancher Labs. k3s installs Traefik as the Ingress Controller, and
 a service loadbalancer (klippy-lb) by default so that the cluster is ready to go
 as soon as it starts up. K3s previously installed Traefik 1.7, and more recently
-Traefik 2.5.0. The instructions below will be deploying a k3s cluster _without_
+Traefik 2.6.2. The instructions below will be deploying a k3s cluster _without_
 the default Traefik installation as we want to deploy this ourselves so that we
-can use the latest Traefik v2 release, version 2.6 at time of writing, and the
+can use the latest Traefik v2 release, version 2.8.1 at time of writing, and the
 Kubernetes Ingress Controller.
 
 ### k3s v1.21.0+k3s1
 
 The K3s `v1.21.0+k3s1` release includes core support for Traefik v2.4 instead of
-Traefik 1.7. This is now v2.5.0 in later K3s releases. This repository will
+Traefik 1.7. This is now v2.6.2 in later K3s releases. This repository will
 however continue to be maintained as:
 
-- it attempts to remain on the latest Traefik releases, v2.6.1 at time of
-  writing, vs. 2.5.0
+- it attempts to remain on the latest Traefik releases, v2.8.1 at time of
+  writing, vs. 2.6.2
 - people will be on older releases of k3s for some time
 - it is not specific to k3s and should support other k8s distributions
 - it contains additional helpful configuration and examples than that provided
@@ -134,7 +134,7 @@ Comment out the below annotation in the `005-deployment.yaml` and
 
 ## Install Traefik Kubernetes CRD Ingress Controller
 
-k3s ships with Traefik 1.7 or Traefik 2.5.0 by default, depending on the release
+k3s ships with Traefik 1.7 or Traefik 2.6.2 by default, depending on the release
 version, so we need to install Traefik v2 separately using the manifests in this
 repository. The `--disable=traefik` argument used will mean that Traefik is not
 installed.
@@ -598,7 +598,7 @@ access to the whoami service.
 [200-whoami-ingressroute.yaml]: ./200-whoami-ingressroute.yaml
 [300-whoami-ingress.yaml]: ./300-whoami-ingress.yaml
 [400-whoami-httproute.yaml]: ./400-whoami-httproute.yaml
-[Accessing Resources in Other Namespaces]:
+[accessing resources in other namespaces]:
   #accessing-resources-in-other-namespaces
 [apparmor]: #apparmor
 [basic authentication]: #basic-authentication

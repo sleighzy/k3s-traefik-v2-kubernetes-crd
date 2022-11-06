@@ -41,7 +41,7 @@ a service loadbalancer (klippy-lb) by default so that the cluster is ready to go
 as soon as it starts up. K3s previously installed Traefik 1.7, and more recently
 Traefik 2.6.2. The instructions below will be deploying a k3s cluster _without_
 the default Traefik installation as we want to deploy this ourselves so that we
-can use the latest Traefik v2 release, version 2.8.1 at time of writing, and the
+can use the latest Traefik v2 release, version 2.9.4 at time of writing, and the
 Kubernetes Ingress Controller.
 
 ### k3s v1.21.0+k3s1
@@ -50,7 +50,7 @@ The K3s `v1.21.0+k3s1` release includes core support for Traefik v2.4 instead of
 Traefik 1.7. This is now v2.6.2 in later K3s releases. This repository will
 however continue to be maintained as:
 
-- it attempts to remain on the latest Traefik releases, v2.8.1 at time of
+- it attempts to remain on the latest Traefik releases, v2.9.4 at time of
   writing, vs. 2.6.2
 - people will be on older releases of k3s for some time
 - it is not specific to k3s and should support other k8s distributions
